@@ -1,3 +1,4 @@
+
 /**
  * Represents a player in the AFL game.
  * Each player has a name, position, goals, behinds, kicks, and other attributes.
@@ -24,24 +25,6 @@ public class Player
     private Randomizer randomizer;
     private boolean isReserve;
 
-
-    //default constructor
-    public Player()
-    {
-        this.name = "";
-        this.position = "";
-        this.goals = 0;
-        this.team = null;
-        this.kicks = 0;
-        this.behinds = 0;
-        this.passCount = 0;
-        this.isStar = false;
-        this.isInjured = false;
-        this.reported = 0;
-        this.isActive = false;
-        this.playerScore = 0;
-        this.isReserve = false;
-    }
     //non-default constructor
     public Player(String name, String position, int goals, Team team)
     {
@@ -57,10 +40,203 @@ public class Player
         this.reported = 0;
         this.isActive = true;
         this.playerScore = 0;
-        this.isReserve = false;
+        if(this.position.equals("Reserve"))
+        {
+            this.isReserve = true;
+        }
+        else
+        {
+            this.isReserve = false;
+        }
+    }
+    public Player startEvent(Player currentPlayer)
+    {
+        switch (currentPlayer.getPosition()) {
+            case "Forward":
+                if (currentPlayer.isStar())
+                {
+                    return handleStarForwardEvent(currentPlayer);
+                }
+                else
+                {
+                    return handleForwardEvent(currentPlayer);
+                }
+            case "Midfielder":
+                if (currentPlayer.isStar())
+                {
+                    return handleStarMidfielderEvent(currentPlayer);
+                }
+                else
+                {
+                    return handleMidfielderEvent(currentPlayer);
+                }
+            case "Defender":
+                if (currentPlayer.isStar())
+                {
+                    return handleStarDefenderEvent(currentPlayer);
+                }
+                else
+                {
+                    return handleDefenderEvent(currentPlayer);
+                }
+            default:
+                return currentPlayer;
+        }
     }
 
-    
+    public Player handleForwardEvent(Player currentPlayer)
+    {
+        final Randomizer randomizer = currentPlayer.getTeam().getRandomizer();
+        double action = randomizer.generateActionProbability();
+        // Reset this for regular play
+
+        if (action < 30)
+        {
+            currentPlayer = handleScore(currentPlayer, 6);
+        }
+        else if (action < 70)
+        {
+            currentPlayer = handleScore(currentPlayer, 1);
+        }
+        else if (action < 90)
+        {
+            currentPlayer = handlePass(currentPlayer, "Forward");
+        }
+        else
+        {
+            currentPlayer = handleTurnover(currentPlayer, "Defender");
+        }
+        return currentPlayer;
+    }
+
+    public Player handleStarForwardEvent(Player currentPlayer)
+    {
+        final Randomizer randomizer = currentPlayer.getTeam().getRandomizer();
+        double action = randomizer.generateActionProbability();
+        //startFromCentre = false;  // Reset this for regular play
+        if (action < 45)
+        {
+            currentPlayer = handleScore(currentPlayer, 6);
+            //startFromCentre = true;
+        }
+        else if (action < 85)
+        {
+            currentPlayer = handleScore(currentPlayer, 1);
+        }
+        else if (action < 95)
+        {
+            currentPlayer = handlePass(currentPlayer, "Forward");
+        }
+        else
+        {
+            currentPlayer = handleTurnover(currentPlayer, "Defender");
+        }
+        return currentPlayer;
+    }
+
+    public Player handleMidfielderEvent(Player currentPlayer)
+    {
+        final Randomizer randomizer = currentPlayer.getTeam().getRandomizer();
+        double action = randomizer.generateActionProbability();
+        //startFromCentre = false;  // Reset this for regular play
+
+        if (action < 5)
+        {
+            currentPlayer = handleScore(currentPlayer, 6);
+        }
+        else if (action < 15)
+        {
+            currentPlayer = handleScore(currentPlayer, 1);
+        }
+        else if (action < 45)
+        {
+            currentPlayer = handlePass(currentPlayer, "Forward");
+        }
+        else if (action < 75)
+        {
+            currentPlayer = handlePass(currentPlayer, "Midfielder");
+        }
+        else
+        {
+            currentPlayer = handleTurnover(currentPlayer, "Midfielder");
+        }
+        return currentPlayer;
+    }
+
+    /*
+     * Method for handling a star Forward's event
+     * @param currentPlayer The player currently with the ball
+     * @param startFromCentre A flag indicating if play starts from the center
+     * @return Player (the player who holds the ball)
+     */
+    public Player handleStarMidfielderEvent(Player currentPlayer)
+    {
+        final Randomizer randomizer = currentPlayer.getTeam().getRandomizer();
+        double action = randomizer.generateActionProbability();
+        //startFromCentre = false;  // Reset this for regular play
+
+        if (action < 10)
+        {
+            currentPlayer = handleScore(currentPlayer, 6);
+            //startFromCentre = true;
+        }
+        else if (action < 20)
+        {
+            currentPlayer = handleScore(currentPlayer, 1);
+        }
+        else if (action < 55)
+        {
+            currentPlayer = handlePass(currentPlayer, "Forward");
+        }
+        else if (action < 90)
+        {
+            currentPlayer = handlePass(currentPlayer, "Midfielder");
+        }
+        else
+        {
+            currentPlayer = handleTurnover(currentPlayer, "Midfielder");
+        }
+        return currentPlayer;
+    }
+
+    public Player handleDefenderEvent(Player currentPlayer)
+    {
+        final Randomizer randomizer = currentPlayer.getTeam().getRandomizer();
+        double action = randomizer.generateActionProbability();
+        //startFromCentre = false;  // Reset this for regular play
+
+        if (action < 80)
+        {
+            currentPlayer = handlePass(currentPlayer, "Midfielder");
+        }
+        else
+        {
+            currentPlayer = handleTurnover(currentPlayer, "Forward");
+        }
+        return currentPlayer;
+    }
+
+    /*
+     * Method for handling a star Defender's event
+     * @param currentPlayer The player currently with the ball
+     * @param //startFromCentre A flag indicating if play starts from the center
+     * @return Player (the player who holds the ball)
+     */
+    public Player handleStarDefenderEvent(Player currentPlayer)
+    {
+        final Randomizer randomizer = currentPlayer.getTeam().getRandomizer();
+        double action = randomizer.generateActionProbability();
+        //startFromCentre = false;  // Reset this for regular play
+        if (action < 95)
+        {
+            currentPlayer = handlePass(currentPlayer, "Midfielder");
+        }
+        else
+        {
+            currentPlayer = handleTurnover(currentPlayer, "Defender");
+        }
+        return currentPlayer;
+    }
     //Getters and Setters
     public void addPassCount()
     {
@@ -138,11 +314,6 @@ public class Player
     public void setInjured(boolean isInjured)
     {
         this.isInjured = isInjured;
-        if (isInjured && isActive == false)
-        {
-            this.isActive = false;
-            this.isInjured = true;
-        }
     }
 
     public Team getTeam()
@@ -210,6 +381,9 @@ public class Player
         currentPlayer.addKick();
         System.out.println(currentPlayer.printName() + " passed the ball to " + teammate.printName());
         System.out.println(teammate.printName() + " has the ball.");
+        if(teammate.isReserve) {
+            System.out.println();
+        }
         return teammate;
     }
 
@@ -244,23 +418,30 @@ public class Player
     */
     public String printPlayerCondition()
     {
-        if (this.isInjured == true && this.isReserve == false)
+        if (this.isInjured && !this.isReserve)
         {
-            return "(Injured)";
+            return position + "(Injured)";
         }
-        else if (this.isReserve == true && this.isInjured == true)
+        else if (this.isReserve && this.isInjured)
         {
-            return "(Reserve)(Injured)";
-        }
-        else
+            return position + "(Reserve)(Injured)";
+        } else if (this.isReserve && !this.isInjured)
         {
-            return "";
+            return position + "(Reserve)";
+        } else
+        {
+            return position;
+
         }
     }
 
     public String printName()
     {
         return this.name + "(" + this.position + ", "+this.team.getTeamName() + ")";
+    }
+
+    public void setPosition(String position) {
+        this.position = position;
     }
 }
 

@@ -200,16 +200,22 @@ public class AFLGame {
             case "Forward":
                 if (currentPlayer instanceof Forward) {
                     currentPlayer = ((Forward) currentPlayer).startEvent(currentPlayer);
+                } else {
+                    currentPlayer = currentPlayer.startEvent(currentPlayer);
                 }
                 break;
             case "Midfielder":
                 if (currentPlayer instanceof Midfielder) {
                     currentPlayer = ((Midfielder) currentPlayer).startEvent(currentPlayer);
+                } else {
+                    currentPlayer = currentPlayer.startEvent(currentPlayer);
                 }
                 break;
             case "Defender":
                 if (currentPlayer instanceof Defender) {
                     currentPlayer = ((Defender) currentPlayer).startEvent(currentPlayer);
+                } else {
+                    currentPlayer = currentPlayer.startEvent(currentPlayer);
                 }
                 break;
             default:

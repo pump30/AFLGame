@@ -46,7 +46,6 @@ public class Midfielder extends Player
         if (action < 5) 
         {
             currentPlayer = handleScore(currentPlayer, 6);
-            return null;
         } 
         else if (action < 15) 
         {

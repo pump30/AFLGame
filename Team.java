@@ -136,6 +136,21 @@ public class Team {
                     .collect(Collectors.toList());
     }
 
+    public Player getReserve() {
+        List<Player> availableReserves = new ArrayList<>();
+        for(Player player : players) {
+            if(player.getPosition().equalsIgnoreCase("Reserve")) {
+                availableReserves.add(player);
+            }
+        }
+        if (!availableReserves.isEmpty()) {
+            Random random = new Random();
+            int randomIndex = random.nextInt(availableReserves.size());
+            return availableReserves.get(randomIndex);
+        }
+        return null;
+    }
+
 
     public void setStarPlayer(Team team, int starPlayerNumber) {
         // Ensure that the number of star players does not exceed the active players
@@ -197,8 +212,7 @@ public class Team {
         System.out.println("Individual statistics:");
         System.out.printf("%-10s %-10s %-10s %-10s %-10s %-10s%n", "Name", "Kicks", "Goals", "Behinds", "Pass Percent", "Position");
         for(Player player : players) {
-            System.out.printf("%-10s %-10s %-10s %-10s %-10s %-10s %-1s%n", player.getName(), player.getKicks(), player.getGoals(), player.getBehinds(), player.getPassPercent(), player.getPosition(), player.printPlayerCondition());
-            //System.out.print(player.printPlayerCondition());
+            System.out.printf("%-10s %-10s %-10s %-10s %-10s %-10s%n", player.getName(), player.getKicks(), player.getGoals(), player.getBehinds(), player.getPassPercent(), player.printPlayerCondition());
         }
     }
 

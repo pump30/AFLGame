@@ -50,7 +50,6 @@ public class Forward extends Player
         if (action < 30) 
         {
             currentPlayer = handleScore(currentPlayer, 6);
-            return null;
         } 
         else if (action < 70) 
         {

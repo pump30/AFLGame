@@ -122,18 +122,25 @@ public class Randomizer {
         // Filter out the injured players
         List<Player> uninjuredPlayers = new ArrayList<>();
         for (Player player : allActivePlayers) {
-            if (!player.isInjured()) {
+            if (!player.isInjured() && !player.getPosition().equals("Reserve")) {
                 uninjuredPlayers.add(player);
             }
         }
 
-        // 2% chance of injuring a player
-        if (random.nextInt(100) < 2 && !uninjuredPlayers.isEmpty()) {
+        // 5% chance of injuring a player
+        if (random.nextInt(100) < 5 && !uninjuredPlayers.isEmpty()) {
             // Select a random player to be injured
             Player injuredPlayer = uninjuredPlayers.get(random.nextInt(uninjuredPlayers.size()));
             injuredPlayer.setInjured(true);
             injuredPlayer.setActive(false);
             System.out.println(injuredPlayer.printName() + " is injured!");
+
+            Player replacePlayer = injuredPlayer.getTeam().getReserve();
+            if(replacePlayer == null) {
+                System.out.println("No available substitute for " + injuredPlayer.getName() + " in position " + injuredPlayer.getPosition() + ".");
+            } else {
+                replacePlayer.setPosition(injuredPlayer.getPosition());
+            }
 
             // If the injured player is the current ball holder, get a teammate in the same position
             if (injuredPlayer.equals(currentPlayer)) {
@@ -155,7 +162,7 @@ public class Randomizer {
 
     /*
      *
-     * @ return Palyer a random active teammate that fits the target position
+     * @ return Palyer a random active teammate(in the court) that fits the target position
      */
     public Player getRandomActiveTeammate(Player currentPlayer, String targetPosition) {
         List<Player> filteredPlayers = new ArrayList<>();
